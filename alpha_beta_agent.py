@@ -28,7 +28,7 @@ class AlphaBetaAgent(agent.Agent):
              opponent=1
 
             #using board.getoutcome() to determine a winning or a losing board
-            #
+            
     if brd.get_outcome() == user and brd.player==opponent:
         return 100000000000000000000000000000000000000000000000
 
