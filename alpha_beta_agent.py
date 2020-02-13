@@ -18,6 +18,8 @@ class AlphaBetaAgent(agent.Agent):
         # Max search depth
         self.max_depth = max_depth
 
+    # ISAAC: probably shouldn't focus on this until we have a working 
+    #        minimax algorithm. I adjusted the stupid large heuristic values 
     def path_heuristics(self, brd, player):
 
         if player == 1:
@@ -29,12 +31,11 @@ class AlphaBetaAgent(agent.Agent):
             opponent = 1
 
         # using board.getoutcome() to determine a winning or a losing board
-
         if brd.get_outcome() == user and brd.player == opponent:
-            return 100000000000000000000000000000000000000000000000
+            return 1000000
 
         if brd.get_outcome() == opponent and brd.player == user:
-            return -9999999999999999999999999999999999999999999999999
+            return -1000000
 
         board_heuristics = 0
         for i in range(0, brd.h):
