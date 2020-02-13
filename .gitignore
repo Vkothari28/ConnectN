@@ -1,10 +1,4 @@
-__pycache__/agent.cpython-37.pyc
-__pycache__/game.cpython-37.pyc
-__pycache__/board.cpython-37.pyc
-__pycache__/alpha_beta_agent.cpython-37.pyc
+__pycache__/**
 .project
 .pydevproject
-.idea/ConnectN.iml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/inspectionProfiles/profiles_settings.xml
+.idea/**
