@@ -20,6 +20,23 @@ class AlphaBetaAgent(agent.Agent):
         self.me = None
         self.you = None
 
+
+    def heuristic2(self,brd):
+        score_count =0
+        movelist = self.legalmoves(brd)
+        for c in range (brd.w):
+            rows=movelist[c]
+
+            if rows == -1: #keep going if it is full
+                continue
+            vertical_score =
+
+            diagonal_up_score=
+
+            horizontal_score=
+
+            diagonaldown_score =
+
     # ISAAC: we should add a heuristic here that gives/removes value states
     #        that have more in a row
     def heuristic(self, brd):
@@ -48,6 +65,26 @@ class AlphaBetaAgent(agent.Agent):
                                 value += 0
         return value
 
+# Vinit Experimenting, feel free to change anything you think does not fit
+    def legalmoves(self,brd):
+        moves = [None] * brd.w
+
+        # Check to see if each column  full, if not find a spot
+        for x in range(brd.w):
+
+           # checking valid moves, this checks if the column in full and if it is no move can be made
+            if brd[x][0] != 0:
+                moves[x] = -1
+
+            # If the column is not full, return the height of the first open space
+            else:
+                for y in range(brd.h):
+                   if brd[x][y] == 0 and y == brd.h - 1:  #at bottom check if space above is empty
+                        moves[x] = y
+                # Check if space is empty and below is full
+                    elif brd[x][y] == 0 and brd[x][y + 1] != 0:
+                        moves[x] = y
+            return moves #Returns all valid moves
     # Pick a column.
     #
     # PARAM [board.Board] brd: the current board state
