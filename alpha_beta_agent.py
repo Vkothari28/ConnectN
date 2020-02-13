@@ -15,26 +15,19 @@ class AlphaBetaAgent(agent.Agent):
     # PARAM [int]    max_depth: the maximum search depth
     def __init__(self, name, max_depth):
         super().__init__(name)
-        # Max search depth
+
         self.max_depth = max_depth
+        self.player = None
 
     # ISAAC: probably shouldn't focus on this until we have a working 
     #        minimax algorithm. I adjusted the stupid large heuristic values 
-    def path_heuristics(self, brd, player):
-
-        if player == 1:
-            user = 1
-            opponent = 2
-
-        else:
-            user = 2
-            opponent = 1
+    def heuristic(self, brd):
 
         # using board.getoutcome() to determine a winning or a losing board
-        if brd.get_outcome() == user and brd.player == opponent:
+        if brd.get_outcome() == self.player and brd.player != self.player:
             return 1000000
 
-        if brd.get_outcome() == opponent and brd.player == user:
+        if brd.get_outcome() != self.player and brd.player == self.player:
             return -1000000
 
         board_heuristics = 0
@@ -42,9 +35,9 @@ class AlphaBetaAgent(agent.Agent):
             for j in range(0, brd.w):
                 if brd.board[i][j] != 0:
                     if brd.is_any_line_at(i, j):
-                        if brd.board[i][j] == opponent:
+                        if brd.board[i][j] != self.player:
                             board_heuristics -= 10
-                        elif brd.board[i][j] == user:
+                        elif brd.board[i][j] == self.player:
                             board_heuristics += 1
                         else:
                             board_heuristics += 0
@@ -59,7 +52,7 @@ class AlphaBetaAgent(agent.Agent):
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
         # Your code here
-        # this is a test
+        
 
     # Get the successors of the given board.
     #
