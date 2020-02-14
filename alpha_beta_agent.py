@@ -40,18 +40,18 @@ class AlphaBetaAgent(agent.Agent):
                 value = brd[row + (brd.n - 1) - x][col]
                 # if it is the first, store it as the now value
                 if first_check:
-                    current_token = value
+                    now_value = value
                     first_check = False
                 # if the current_token isn't the same as the value, then it is broken
-                if current_token != value:
+                if now_value != value:
                     is_broken = True
                 # else, the chain is broken, so reset each player and the current_token
                 if cracked:
                     player = 0
                     opposition = 0
                     cracked = False
-                    current_token = value
-                # increment the player and opponent variables based on value
+                    now_value = value
+                # increase based on value
                 if value == 1:
                     player += 1
                 elif value == 2:
@@ -60,7 +60,7 @@ class AlphaBetaAgent(agent.Agent):
             if player > opposition:
                 return (10 ** player ) / 10
         # return the negative  value of it if opponent
-         else:
+        else:
             return -(10 ** opposition) / 10
 
     def heuristic2(self,brd):
@@ -73,11 +73,11 @@ class AlphaBetaAgent(agent.Agent):
                 continue
             vertical_score = self.upHeuristic(rows, c, brd)  #keeps the score for the vertical aspect
 
-            diagonal_up_score=
+          #  diagonal_up_score=
 
-            horizontal_score=
+           # horizontal_score=
 
-            diagonaldown_score =
+            #diagonaldown_score =
 
     # ISAAC: we should add a heuristic here that gives/removes value states
     #        that have more in a row
@@ -123,8 +123,7 @@ class AlphaBetaAgent(agent.Agent):
                 for y in range(brd.h):
                    if brd[x][y] == 0 and y == brd.h - 1:  #at bottom check if space above is empty
                         moves[x] = y
-                # Check if space is empty and below is full
-                    elif brd[x][y] == 0 and brd[x][y + 1] != 0:
+                   elif brd[x][y] == 0 and brd[x][y + 1] != 0:
                         moves[x] = y
             return moves #Returns all valid moves
     # Pick a column.
