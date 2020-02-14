@@ -33,11 +33,11 @@ class AlphaBetaAgent(agent.Agent):
 
         # iterate over the next brd.n spaces in the same column to get evaluation,
         # starting from the bottom
-        for x in range(brd.n):  # ex: (0, 1, 2, 3)
-            # make sure that the token location is valid (less than the board height)
-            if (row + (brd.n - 1) - i) <= brd.h:
+        for x in range(brd.n):
+            # make sure that the token location is valid
+            if (row + (brd.n - 1) - x) <= brd.h:
                 # store the value of the next token
-                value = brd[row + (brd.n - 1) - i][col]
+                value = brd[row + (brd.n - 1) - x][col]
                 # if it is the first, store it as the now value
                 if first_check:
                     current_token = value
