@@ -20,6 +20,48 @@ class AlphaBetaAgent(agent.Agent):
         self.me = None
         self.you = None
 
+    def upHeuristic(self, row, col, brd):
+
+        cracked = False
+
+        first_check = True
+        # variable for the first token to start the chain
+        now_value = -1
+        # variables for the player  and opposition
+        player = 0
+        opposition = 0
+
+        # iterate over the next brd.n spaces in the same column to get evaluation,
+        # starting from the bottom
+        for x in range(brd.n):  # ex: (0, 1, 2, 3)
+            # make sure that the token location is valid (less than the board height)
+            if (row + (brd.n - 1) - i) <= brd.h:
+                # store the value of the next token
+                value = brd[row + (brd.n - 1) - i][col]
+                # if it is the first, store it as the now value
+                if first_check:
+                    current_token = value
+                    first_check = False
+                # if the current_token isn't the same as the value, then it is broken
+                if current_token != value:
+                    is_broken = True
+                # else, the chain is broken, so reset each player and the current_token
+                if cracked:
+                    player = 0
+                    opposition = 0
+                    cracked = False
+                    current_token = value
+                # increment the player and opponent variables based on value
+                if value == 1:
+                    player += 1
+                elif value == 2:
+                    opposition += 1
+        # return the greater value to the power of 10 ex: (1, 10, 100, 1000)
+            if player > opposition:
+                return (10 ** player ) / 10
+        # return the negative  value of it if opponent
+         else:
+            return -(10 ** opposition) / 10
 
     def heuristic2(self,brd):
         score_count =0
@@ -29,7 +71,7 @@ class AlphaBetaAgent(agent.Agent):
 
             if rows == -1: #keep going if it is full
                 continue
-            vertical_score =
+            vertical_score = self.upHeuristic(rows, c, brd)  #keeps the score for the vertical aspect
 
             diagonal_up_score=
 
