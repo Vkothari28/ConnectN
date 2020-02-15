@@ -13,10 +13,10 @@ class AlphaBetaAgent(agent.Agent):
     #
     # PARAM [string] name:      the name of this player
     # PARAM [int]    max_depth: the maximum search depth
-    def __init__(self, name, max_depth):
+    def __init__(self, name):
         super().__init__(name)
 
-        self.max_depth = max_depth
+        self.max_depth = 4
         self.me = None
         self.you = None
 
@@ -24,7 +24,7 @@ class AlphaBetaAgent(agent.Agent):
         """Assign a heuristic value to the current state of the board"""
 
         value = 0
-        
+
         if "defensive": 
             # This simply causes the ai to play defensively:
             #   if the AI can win, play that move
@@ -85,7 +85,7 @@ class AlphaBetaAgent(agent.Agent):
         if t == self.me:
             sign = 1
         else:
-            sign = -1
+            sign = -2
 
         # Go through elements
         for i in range(1, brd.n):
@@ -104,9 +104,16 @@ class AlphaBetaAgent(agent.Agent):
     # NOTE: make sure the column is legal, or you'll lose the game.
     def go(self, brd):
         """Search for the best move (choice of column for the token)"""
-        # Your code here
         self.me = brd.player
         self.you = (not (brd.player-1))+1
+        size = brd.w * brd.h
+        if size < 80:
+            self.max_depth = 6
+        elif size < 90:
+            self.max_depth = 5
+        else:
+            self.max_depth = 4
+
         alpha = -math.inf
         beta = math.inf
         ((b,c),v) = self.max(brd, self.max_depth, alpha, beta)
@@ -178,3 +185,5 @@ class AlphaBetaAgent(agent.Agent):
             # Add board to list of successors
             succ.append((nb, col))
         return succ
+
+THE_AGENT = AlphaBetaAgent("Group03")
