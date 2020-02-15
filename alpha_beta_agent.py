@@ -20,113 +20,11 @@ class AlphaBetaAgent(agent.Agent):
         self.me = None
         self.you = None
 
-    def down_Heuristic(self, row, col, brd):
-
-        cracked = False
-
-        first_check = True
-        # variable for the first token to start the chain
-        now_value = -1
-        # variables for the player  and opposition
-        player = 0
-        opposition = 0
-
-        # iterate over the next brd.n spaces in the same column to get evaluation,
-        # starting from the bottom
-        for y   in range(brd.n):
-            # make sure that the token location is valid
-            if (col + (brd.n - 1) - y) <= brd.w:
-
-                value = brd[row ][col + (brd.n - 1) - y]
-
-                if first_check:
-                    now_value = value
-                    first_check = False
-
-                if now_value != value:
-                    cracked = True
-
-                if cracked:
-                    player = 0
-                    opposition = 0
-                    cracked = False
-                    now_value = value
-                # based on value changes occur
-                if value == 1:
-                    player += 1
-                elif value == 2:
-                    opposition += 1
-            # return the greater value to the power of 10 ex: (1, 10, 100, 1000)
-            if player > opposition:
-                return (10 ** player) / 10
-        # return the negative  value of it if opponent
-        else:
-            return -(10 ** opposition) / 10
-
-    def upHeuristic(self, row, col, brd):
-
-        cracked = False
-
-        first_check = True
-        # variable for the first token to start the chain
-        now_value = -1
-        # variables for the player  and opposition
-        player = 0
-        opposition = 0
-
-
-        # start from the bottom part
-        for x in range(brd.n):
-            # make sure that the token location is valid
-            if (row + (brd.n - 1) - x) <= brd.h:
-                # store the value of the next token
-                value = brd[row + (brd.n - 1) - x][col]
-
-                if first_check:
-                    now_value = value
-                    first_check = False
-
-                if now_value != value:
-                    cracked = True
-
-                if cracked:
-                    player = 0
-                    opposition = 0
-                    cracked = False
-                    now_value = value
-                # increase based on value
-                if value == 1:
-                    player += 1
-                elif value == 2:
-                    opposition += 1
-        # we want to return the greater value
-            if player > opposition:
-                return (10 ** player ) / 10
-        # return the negative  value of it if opponent
-        else:
-            return -(10 ** opposition) / 10
-
-    def heuristic2(self,brd):
-        score_count =0
-        movelist = self.legalmoves(brd)
-        for c in range (brd.w):
-            rows=movelist[c]
-
-            if rows == -1: #keep going if it is full
-                continue
-            vertical_score = self.upHeuristic(rows, c, brd)  #keeps the score for the vertical aspect
-
-          #  diagonal_up_score=
-
-            horizontal_score= self.down_Heuristic(rows,c,brd)
-
-            #diagonaldown_score =
-
     def heuristic(self, brd):
         """Assign a heuristic value to the current state of the board"""
 
         value = 0
-
+        
         if "defensive": 
             # This simply causes the ai to play defensively:
             #   if the AI can win, play that move
@@ -137,38 +35,66 @@ class AlphaBetaAgent(agent.Agent):
             if brd.get_outcome() == self.you and brd.player == self.me:
                 return -100000
 
-            # iterate through the board to find games that 
+            # Iterate through the board to find states that will lead to a favorable outcome. 
+            # Weighted to be defensive
             for c in range(0, brd.w):
                 for r in range(0, brd.h):
                     if brd.board[r][c] != 0:
                         if brd.is_any_line_at(c, r):
                             if brd.board[r][c] == self.you:
-                                value -= 10
+                                value -= 10 ** (brd.n - 1)
                             elif brd.board[r][c] == self.me:
-                                value += 1
+                                value += 10 ** (brd.n - 2)
                             else:
                                 value += 0
+        
+        if "aggresive":
+            # vertical value
+            for c in range(0, brd.w):
+                for r in range(0, brd.h - brd.n + 1):
+                    value += self.n2_line_at(brd, c, r, 0, 1)
+
+            # horrizonal value
+            for c in range(0, brd.w - brd.n + 1):
+                for r in range(0, brd.h):
+                    value += self.n2_line_at(brd, c, r, 1, 0)
+
+            # diagonal1 value
+            for c in range(0, brd.w - brd.n + 1):
+                for r in range(0, brd.h - brd.n + 1):
+                    value += self.n2_line_at(brd, c, r, 1, 1)
+
+            # diagonal2 value
+            for c in range(brd.n - 1, brd.w):
+                for r in range(0, brd.h - brd.n + 1):
+                    value += self.n2_line_at(brd, c, r, 1, -1)
+
         return value
+    
+    def n2_line_at(self, brd, x, y, dx, dy):
+        n = 1
+        sign = 0
 
-    # Vinit Experimenting, feel free to change anything you think does not fit
-    def legalmoves(self,brd):
-        moves = [None] * brd.w
+        # Avoid out-of-bounds errors
+        if ((x + (brd.n-1) * dx >= brd.w) or
+            (y + (brd.n-1) * dy < 0) or (y + (brd.n-1) * dy >= brd.h)):
+            return 0
+        
+        # Get token at (x,y)
+        t = brd.board[y][x]
+        if t == self.me:
+            sign = 1
+        else:
+            sign = -1
 
-        # Check to see if each column  full, if not find a spot
-        for x in range(brd.w):
-
-           # checking valid moves, this checks if the column in full and if it is no move can be made
-            if brd[x][0] != 0:
-                moves[x] = -1
-
-            # If the column is not full, return the height of the first open space
+        # Go through elements
+        for i in range(1, brd.n):
+            if brd.board[y + i*dy][x + i*dx] == t:
+                n *= 10
             else:
-                for y in range(brd.h):
-                   if brd[x][y] == 0 and y == brd.h - 1:  #at bottom check if space above is empty
-                        moves[x] = y
-                   elif brd[x][y] == 0 and brd[x][y + 1] != 0:
-                        moves[x] = y
-            return moves #Returns all valid moves
+                break
+
+        return (n * sign)
     
     # Pick a column.
     #
