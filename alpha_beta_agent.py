@@ -49,29 +49,33 @@ class AlphaBetaAgent(agent.Agent):
                                 value += 0
         
         if "aggresive":
+            # This makes the AI find "favorable" positions on the board 
+            # i.e. AI more in a row is better, opponent more in a row is worse
+
             # vertical value
             for c in range(0, brd.w):
                 for r in range(0, brd.h - brd.n + 1):
-                    value += self.n2_line_at(brd, c, r, 0, 1)
+                    value += self.n_line_at(brd, c, r, 0, 1)
 
             # horrizonal value
             for c in range(0, brd.w - brd.n + 1):
                 for r in range(0, brd.h):
-                    value += self.n2_line_at(brd, c, r, 1, 0)
+                    value += self.n_line_at(brd, c, r, 1, 0)
 
             # diagonal1 value
             for c in range(0, brd.w - brd.n + 1):
                 for r in range(0, brd.h - brd.n + 1):
-                    value += self.n2_line_at(brd, c, r, 1, 1)
+                    value += self.n_line_at(brd, c, r, 1, 1)
 
             # diagonal2 value
             for c in range(brd.n - 1, brd.w):
                 for r in range(0, brd.h - brd.n + 1):
-                    value += self.n2_line_at(brd, c, r, 1, -1)
+                    value += self.n_line_at(brd, c, r, 1, -1)
 
         return value
     
-    def n2_line_at(self, brd, x, y, dx, dy):
+    def n_line_at(self, brd, x, y, dx, dy):
+        """Calculate a score based off of the maximum number of tokens in a row"""
         n = 1
         sign = 0
 
