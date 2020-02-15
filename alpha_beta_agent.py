@@ -20,6 +20,49 @@ class AlphaBetaAgent(agent.Agent):
         self.me = None
         self.you = None
 
+    def down_Heuristic(self, row, col, brd):
+
+            cracked = False
+
+            first_check = True
+            # variable for the first token to start the chain
+            now_value = -1
+            # variables for the player  and opposition
+            player = 0
+            opposition = 0
+
+            # iterate over the next brd.n spaces in the same column to get evaluation,
+            # starting from the bottom
+            for y   in range(brd.n):
+                # make sure that the token location is valid
+                if (col + (brd.n - 1) - y) <= brd.w:
+
+                    value = brd[row ][col + (brd.n - 1) - y]
+
+                    if first_check:
+                        now_value = value
+                        first_check = False
+
+                    if now_value != value:
+                        cracked = True
+
+                    if cracked:
+                        player = 0
+                        opposition = 0
+                        cracked = False
+                        now_value = value
+                    # based on value changes occur
+                    if value == 1:
+                        player += 1
+                    elif value == 2:
+                        opposition += 1
+                # return the greater value to the power of 10 ex: (1, 10, 100, 1000)
+                if player > opposition:
+                    return (10 ** player) / 10
+            # return the negative  value of it if opponent
+            else:
+                return -(10 ** opposition) / 10
+
     def upHeuristic(self, row, col, brd):
 
         cracked = False
@@ -31,21 +74,21 @@ class AlphaBetaAgent(agent.Agent):
         player = 0
         opposition = 0
 
-        # iterate over the next brd.n spaces in the same column to get evaluation,
-        # starting from the bottom
+
+        # start from the bottom part
         for x in range(brd.n):
             # make sure that the token location is valid
             if (row + (brd.n - 1) - x) <= brd.h:
                 # store the value of the next token
                 value = brd[row + (brd.n - 1) - x][col]
-                # if it is the first, store it as the now value
+
                 if first_check:
                     now_value = value
                     first_check = False
-                # if the current_token isn't the same as the value, then it is broken
+
                 if now_value != value:
-                    is_broken = True
-                # else, the chain is broken, so reset each player and the current_token
+                    cracked = True
+
                 if cracked:
                     player = 0
                     opposition = 0
@@ -56,7 +99,7 @@ class AlphaBetaAgent(agent.Agent):
                     player += 1
                 elif value == 2:
                     opposition += 1
-        # return the greater value to the power of 10 ex: (1, 10, 100, 1000)
+        # we want to return the greater value
             if player > opposition:
                 return (10 ** player ) / 10
         # return the negative  value of it if opponent
@@ -75,7 +118,7 @@ class AlphaBetaAgent(agent.Agent):
 
           #  diagonal_up_score=
 
-           # horizontal_score=
+            horizontal_score= self.down_Heuristic(rows,c,brd)
 
             #diagonaldown_score =
 
