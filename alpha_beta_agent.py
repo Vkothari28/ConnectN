@@ -22,46 +22,46 @@ class AlphaBetaAgent(agent.Agent):
 
     def down_Heuristic(self, row, col, brd):
 
-            cracked = False
+        cracked = False
 
-            first_check = True
-            # variable for the first token to start the chain
-            now_value = -1
-            # variables for the player  and opposition
-            player = 0
-            opposition = 0
+        first_check = True
+        # variable for the first token to start the chain
+        now_value = -1
+        # variables for the player  and opposition
+        player = 0
+        opposition = 0
 
-            # iterate over the next brd.n spaces in the same column to get evaluation,
-            # starting from the bottom
-            for y   in range(brd.n):
-                # make sure that the token location is valid
-                if (col + (brd.n - 1) - y) <= brd.w:
+        # iterate over the next brd.n spaces in the same column to get evaluation,
+        # starting from the bottom
+        for y   in range(brd.n):
+            # make sure that the token location is valid
+            if (col + (brd.n - 1) - y) <= brd.w:
 
-                    value = brd[row ][col + (brd.n - 1) - y]
+                value = brd[row ][col + (brd.n - 1) - y]
 
-                    if first_check:
-                        now_value = value
-                        first_check = False
+                if first_check:
+                    now_value = value
+                    first_check = False
 
-                    if now_value != value:
-                        cracked = True
+                if now_value != value:
+                    cracked = True
 
-                    if cracked:
-                        player = 0
-                        opposition = 0
-                        cracked = False
-                        now_value = value
-                    # based on value changes occur
-                    if value == 1:
-                        player += 1
-                    elif value == 2:
-                        opposition += 1
-                # return the greater value to the power of 10 ex: (1, 10, 100, 1000)
-                if player > opposition:
-                    return (10 ** player) / 10
-            # return the negative  value of it if opponent
-            else:
-                return -(10 ** opposition) / 10
+                if cracked:
+                    player = 0
+                    opposition = 0
+                    cracked = False
+                    now_value = value
+                # based on value changes occur
+                if value == 1:
+                    player += 1
+                elif value == 2:
+                    opposition += 1
+            # return the greater value to the power of 10 ex: (1, 10, 100, 1000)
+            if player > opposition:
+                return (10 ** player) / 10
+        # return the negative  value of it if opponent
+        else:
+            return -(10 ** opposition) / 10
 
     def upHeuristic(self, row, col, brd):
 
@@ -122,35 +122,35 @@ class AlphaBetaAgent(agent.Agent):
 
             #diagonaldown_score =
 
-    # ISAAC: we should add a heuristic here that gives/removes value states
-    #        that have more in a row
     def heuristic(self, brd):
         """Assign a heuristic value to the current state of the board"""
+
+        value = 0
 
         if "defensive": 
             # This simply causes the ai to play defensively:
             #   if the AI can win, play that move
-            #   else if the other player is about to win, block it
+            #   else avoid outcomes where the other player wins
             if brd.get_outcome() == self.me and brd.player == self.you:
-                return math.inf
+                return 1000000
 
             if brd.get_outcome() == self.you and brd.player == self.me:
-                return -math.inf
+                return -100000
 
-            value = 0
-            for x in range(0, brd.w):
-                for y in range(0, brd.h):
-                    if brd.board[y][x] != 0:
-                        if brd.is_any_line_at(x, y):
-                            if brd.board[y][x] == self.you:
+            # iterate through the board to find games that 
+            for c in range(0, brd.w):
+                for r in range(0, brd.h):
+                    if brd.board[r][c] != 0:
+                        if brd.is_any_line_at(c, r):
+                            if brd.board[r][c] == self.you:
                                 value -= 10
-                            elif brd.board[y][x] == self.me:
+                            elif brd.board[r][c] == self.me:
                                 value += 1
                             else:
                                 value += 0
         return value
 
-# Vinit Experimenting, feel free to change anything you think does not fit
+    # Vinit Experimenting, feel free to change anything you think does not fit
     def legalmoves(self,brd):
         moves = [None] * brd.w
 
@@ -169,6 +169,7 @@ class AlphaBetaAgent(agent.Agent):
                    elif brd[x][y] == 0 and brd[x][y + 1] != 0:
                         moves[x] = y
             return moves #Returns all valid moves
+    
     # Pick a column.
     #
     # PARAM [board.Board] brd: the current board state
@@ -186,6 +187,7 @@ class AlphaBetaAgent(agent.Agent):
         return c
     
     def max(self, brd, n, alpha, beta):
+        """Find the maximum of the children of the current board"""
         if n == 0:
             return ((brd, None), self.heuristic(brd))
         
@@ -206,6 +208,7 @@ class AlphaBetaAgent(agent.Agent):
         return ((best_brd, best_col), best_value)
 
     def min(self, brd, n, alpha, beta):
+        """Find the minimum of the children of the current board"""
         if n == 0:
             return ((brd, None), self.heuristic(brd))
         
